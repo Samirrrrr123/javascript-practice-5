@@ -1,0 +1,38 @@
+@if (!valid()) {
+  <app-not-found />
+} @else {
+  <nav class="difficulty-nav" aria-label="Сложность приготовления">
+    @for (level of difficulties; track level) {
+      <a [routerLink]="['/', meal, level]" [class.active]="difficulty() === level" [attr.aria-current]="difficulty() === level ? 'page' : null">{{ level }}</a>
+    }
+  </nav>
+
+  <main class="browse">
+    <nav class="meal-nav" aria-label="Приём пищи">
+      @for (type of meals; track type) {
+        <a [routerLink]="['/', type, difficulty()]" [class.active]="meal === type" [attr.aria-current]="meal === type ? 'page' : null">{{ type }}</a>
+      }
+    </nav>
+
+    @if (loading()) {
+      <p class="message" role="status">Загрузка рецептов...</p>
+    } @else if (error()) {
+      <div class="message" role="alert">
+        <p>{{ error() }}</p>
+        <button class="recipe-button" (click)="loadRecipes()">Повторить</button>
+      </div>
+    } @else if (!filteredRecipes().length) {
+      <p class="message" role="status">По выбранным фильтрам рецептов нет.</p>
+    } @else {
+      <div class="recipe-list" tabindex="0" aria-label="Рецепты: горизонтальная прокрутка">
+        @for (recipe of filteredRecipes(); track recipe.id) {
+          <app-recipe-card [recipe]="recipe" />
+        }
+      </div>
+    }
+  </main>
+
+  @if (!loading() && !error()) {
+    <app-more-recipes [recipes]="moreRecipes()" />
+  }
+}

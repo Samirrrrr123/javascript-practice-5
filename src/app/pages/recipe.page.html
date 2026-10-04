@@ -1,0 +1,29 @@
+<a class="back-link" [routerLink]="returnTo">Go back</a>
+
+@if (loading()) {
+  <p class="message" role="status">Загрузка рецепта...</p>
+} @else if (error()) {
+  <div class="message" role="alert">
+    <p>{{ error() }}</p>
+    <button class="recipe-button" (click)="loadRecipe()">Повторить</button>
+  </div>
+} @else if (recipe(); as current) {
+  <main class="recipe-detail">
+    <h2>{{ current.name }}</h2>
+    <div class="detail-main">
+      <div>
+        <h3>Instructions</h3>
+        <ol class="instructions">
+          @for (instruction of current.instructions; track $index) {
+            <li>{{ $index + 1 }}. {{ instruction }}</li>
+          }
+        </ol>
+        <app-recipe-info [recipe]="current" />
+      </div>
+      <img class="detail-photo" [src]="current.image" [alt]="current.name" />
+    </div>
+  </main>
+  <app-more-recipes [recipes]="moreRecipes()" />
+} @else {
+  <app-not-found />
+}
