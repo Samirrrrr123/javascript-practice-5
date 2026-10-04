@@ -1,0 +1,22 @@
+name: Build Angular
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install
+      - run: npm run build -- --base-href /javascript-practice-5/
+      - run: cp dist/recipes/browser/index.html dist/recipes/browser/404.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pages
+          path: dist/recipes/browser
